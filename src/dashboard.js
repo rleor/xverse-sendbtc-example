@@ -3,6 +3,7 @@ import {
   getAddress, 
   signTransaction
 } from 'sats-connect';
+import { psbt } from "./psbt";
 
 class Dashboard extends React.Component {
   constructor(props) {
@@ -18,13 +19,16 @@ class Dashboard extends React.Component {
   componentDidMount() {
 
   }
+  onPSBTClick = async () => {
+    console.log(psbt());
+  };
 
   onConnectClick = async () => {
 
     const getAddressOptions = {
       payload: {
-        purposes: ['ordinals', 'payment'],
-        message: 'Address for receiving Ordinals',
+        purposes: ["payment", "ordinals"],
+        message: 'Address for sats',
         network: {
           type:'Testnet'
         },
@@ -33,7 +37,6 @@ class Dashboard extends React.Component {
         console.log(response)
         // alert(response.addresses[1].publicKey)
         this.setState({
-
         })
       },
       onCancel: () => alert('Request canceled'),
@@ -43,16 +46,17 @@ class Dashboard extends React.Component {
   };
 
   onSignTransactionClick = async () => {
+    let encoded = psbt();
     const signPsbtOptions = {
       payload: {
         network: {
             type:'Testnet'
         },
         message: 'Sign Transaction',
-        psbtBase64: `cHNidP8BAKcCAAAAAtJVbmYvrS64adekw4rhCtbWQNNs9IhWFyNrhYIdkG5dAAAAAAD/////hNCzRVacJR32LJ/chDNUO9B0C3/ci9ZJzHIClfjHLSAAAAAAAP////8CoIYBAAAAAAAiUSCjXEwEb409zg9tZ4NJlmnPqVZaF2TYm9Q1txG7GQ/Q3dB+AQAAAAAAF6kUBE+9kGn9tJlLagtxL54ozfiuyqGHAAAAAAABASughgEAAAAAACJRIDmZV7+7TrMlgI87KFqU2MFVtCS9fmg3f4ZF8zwLgUEtARcguZB1Id24Xg5qN2IrfGhe+9yK5TozSSitvRLPIErU5xcAAQEgoIYBAAAAAAAXqRS9FdmY/QjP0cXH1/+o/144F2orn4ciAgN1Cual4w1uAxLWT+SalvUzyZpqp5eYW7Hlychubra2iEcwRAIgOHUp0YFRZXOrpz5V90PLaPDF/uhCPKLTLbEwVtA7wjsCICPkH0tjb3bS+jmqv/6R746ASxFWGcB8/N41rSHO+4cVAQEEFgAUGAo7GWfcpwS2XI7SsZEN06q8yTIAAAA=`,
+        psbtBase64: encoded,
         broadcast: true,
         inputsToSign: [{
-            address: "tb1p8xv400amf6ejtqy08v5949xcc92mgf9a0e5rwluxghenczupgyksrsee6s",
+            address: "2NEmyev3ZPi3JVtFRZGy6CyAa6jQ1bQbjKq",
             signingIndexes: [0],
         }],
       },
@@ -73,6 +77,15 @@ class Dashboard extends React.Component {
             <br />
             {this.state.paymentAddress && <div>Payment Address: {this.state.paymentAddress}</div>}
             {this.state.ordinalsAddress && <div>Ordinals Address: {this.state.ordinalsAddress}</div>}
+
+            <div style={{ background: "lightgray", padding: 30, margin: 10 }}>
+              <button
+                style={{ height: 30, width: 180 }}
+                onClick={this.onPSBTClick}
+              >
+                Generate PSBT
+              </button>
+            </div>
 
             <div style={{ background: "lightgray", padding: 30, margin: 10 }}>
               <button
